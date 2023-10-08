@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "herotiles.h": "c",
+        "platform.h": "c",
+        "generaltiles.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
