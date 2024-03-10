@@ -1,127 +1,232 @@
-
 #include <gb/gb.h>
-#include <gbdk/platform.h>
 #include <stdint.h>
-#include "hero.h"
 #include "vars.h"
+#include "hero.h"
+#include "level-dbg.h"
 
-#pragma bank 255
-
-BANKREF_EXTERN(drawHero)
-void drawHero() NONBANKED
+void drawHero()
 {
-    move_sprite(0, heroPositionX + 8, heroPositionY + 16);
-    move_sprite(1, heroPositionX + 16, heroPositionY + 16);
-    move_sprite(2, heroPositionX + 8, heroPositionY + 24);
-    move_sprite(3, heroPositionX + 16, heroPositionY + 24);
+    move_sprite(0, hero.x + 8, hero.y + 16);
+    move_sprite(1, hero.x + 16, hero.y + 16);
+    move_sprite(2, hero.x + 8, hero.y + 24);
+    move_sprite(3, hero.x + 16, hero.y + 24);
+
+    move_sprite(4, weapon.x + 8, weapon.y + 16);
 }
 
-BANKREF_EXTERN(updateHero)
-void updateHero() NONBANKED
+void updateHero()
 {
-    if (heroMovement & HERO_SPEED_LEFT)
+    if (hero.movement & HERO_SPEED_LEFT)
     {
-        heroPositionX -= HERO_SPEED;
+        hero.x -= HERO_SPEED;
     }
-    else if (heroMovement & HERO_SPEED_RIGHT)
+    else if (hero.movement & HERO_SPEED_RIGHT)
     {
-        heroPositionX += HERO_SPEED;
+        hero.x += HERO_SPEED;
     }
 
-    if (heroMovement & HERO_SPEED_UP)
+    if (hero.movement & HERO_SPEED_UP)
     {
-        heroPositionY -= HERO_SPEED;
+        hero.y -= HERO_SPEED;
     }
-    else if (heroMovement & HERO_SPEED_DOWN)
+    else if (hero.movement & HERO_SPEED_DOWN)
     {
-        heroPositionY += HERO_SPEED;
+        hero.y += HERO_SPEED;
     }
 
     // Check for warp collisions
-    if(heroPositionX <= 1 || heroPositionX > 143 || heroPositionY <= 1 || heroPositionY > 127) {
-        (*currentPalaceLoadNextRoom)();
-    } 
+    if (hero.x <= 1 || hero.x > 143 || hero.y <= 1 || hero.y > 127)
+    {
+        //(*currentPalaceLoadNextRoom)();
+        loadNextRoomDebug();
+    }
+
+    switch (hero.state)
+    {
+    case HEROSTATE_NORMAL:
+        break;
+    case HEROSTATE_ATTACK:
+        if (--weapon.timer == 0)
+        {
+            weapon.x = 170;
+            weapon.y = 170;
+            hero.state = HEROSTATE_NORMAL;
+            break;
+        }
+        switch (hero.lastDirection)
+        {
+        case HERO_FACING_LEFT:
+            weapon.x = hero.x - 8;
+            weapon.y = hero.y + 4;
+            break;
+        case HERO_FACING_RIGHT:
+            weapon.x = hero.x + 16;
+            weapon.y = hero.y + 4;
+            break;
+        case HERO_FACING_UP:
+            weapon.x = hero.x + 4;
+            weapon.y = hero.y - 8;
+            break;
+        case HERO_FACING_DOWN:
+            weapon.x = hero.x + 4;
+            weapon.y = hero.y + 16;
+            break;
+        }
+
+        break;
+    case HEROSTATE_HIT:
+        if (--hero.hitTimer == 0)
+        {
+            hero.state = HEROSTATE_NORMAL;
+        }
+        break;
+    }
 }
 
-BANKREF_EXTERN(checkCollision)
-void checkCollision() NONBANKED
+void checkCollisionBackground()
 {
     // check target tile left
-    if (heroMovement & HERO_SPEED_LEFT)
+    if (hero.movement & HERO_SPEED_LEFT)
     {
         // get target tile top check
         // x = posX / TS
         // y = posY / TS
         // i = (posX / TS) + ((posY / TS) * MS)
-        targetTileIdTop = ((heroPositionX - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdCenter = ((heroPositionX - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 8) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdBottom = ((heroPositionX - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 16 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.top = ((hero.x - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.center = ((hero.x - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 8) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.bottom = ((hero.x - 1 + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 16 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
 
         if (
-            (*currentLevelHitboxes)[targetTileIdCenter] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdBottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdTop] == 1)
+            (*currentLevelHitboxes)[targetTile.center] == 1 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 1 ||
+            (*currentLevelHitboxes)[targetTile.top] == 1)
         {
             // set hero velocity to 0
-            heroMovement &= ~HERO_SPEED_LEFT;
+            hero.movement &= ~HERO_SPEED_LEFT;
+        }
+        else if (numberEnemies &&
+            ((*currentLevelHitboxes)[targetTile.center] == 2 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 2 ||
+            (*currentLevelHitboxes)[targetTile.top] == 2))
+        {
+            // set hero velocity to 0
+            hero.movement &= ~HERO_SPEED_LEFT;
         }
     }
 
-    if (heroMovement & HERO_SPEED_RIGHT)
+    if (hero.movement & HERO_SPEED_RIGHT)
     {
         // get target tile top check
         // x = posX / TS
         // y = posY / TS
         // i = (posX / TS) + ((posY / TS) * MS)
-        targetTileIdTop = ((heroPositionX + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdCenter = ((heroPositionX + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 8) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdBottom = ((heroPositionX + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 16 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.top = ((hero.x + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.center = ((hero.x + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 8) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.bottom = ((hero.x + 16 + 1 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 16 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
 
         if (
-            (*currentLevelHitboxes)[targetTileIdCenter] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdBottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdTop] == 1)
+            (*currentLevelHitboxes)[targetTile.center] == 1 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 1 ||
+            (*currentLevelHitboxes)[targetTile.top] == 1)
         {
             // set hero velocity to 0
-            heroMovement &= ~HERO_SPEED_RIGHT;
+            hero.movement &= ~HERO_SPEED_RIGHT;
+        }
+        else if (numberEnemies &&
+            ((*currentLevelHitboxes)[targetTile.center] == 2 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 2 ||
+            (*currentLevelHitboxes)[targetTile.top] == 2))
+        {
+            // set hero velocity to 0
+            hero.movement &= ~HERO_SPEED_RIGHT;
         }
     }
 
-    if (heroMovement & HERO_SPEED_UP)
+    if (hero.movement & HERO_SPEED_UP)
     {
         // get target tile top check
         // x = posX / TS
         // y = posY / TS
         // i = (posX / TS) + ((posY / TS) * MS)
-        targetTileIdTop = ((heroPositionX + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdCenter = ((heroPositionX + 8) / HITBOX_TILESIZE) + (((heroPositionY - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdBottom = ((heroPositionX + 16 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.top = ((hero.x + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.center = ((hero.x + 8) / HITBOX_TILESIZE) + (((hero.y - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.bottom = ((hero.x + 16 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y - 1 + HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
 
-        if ((*currentLevelHitboxes)[targetTileIdCenter] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdBottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdTop] == 1)
+        if ((*currentLevelHitboxes)[targetTile.center] == 1 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 1 ||
+            (*currentLevelHitboxes)[targetTile.top] == 1)
         {
             // set hero velocity to 0
-            heroMovement &= ~HERO_SPEED_UP;
+            hero.movement &= ~HERO_SPEED_UP;
+        }
+        else if (numberEnemies &&
+            ((*currentLevelHitboxes)[targetTile.center] == 2 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 2 ||
+            (*currentLevelHitboxes)[targetTile.top] == 2))
+        {
+            // set hero velocity to 0
+            hero.movement &= ~HERO_SPEED_UP;
         }
     }
 
-    if (heroMovement & HERO_SPEED_DOWN)
+    if (hero.movement & HERO_SPEED_DOWN)
     {
         // get target tile top check
         // x = posX / TS
         // y = posY / TS
         // i = (posX / TS) + ((posY / TS) * MS)
-        targetTileIdTop = ((heroPositionX + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdCenter = ((heroPositionX + 8) / HITBOX_TILESIZE) + (((heroPositionY + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
-        targetTileIdBottom = ((heroPositionX + 16 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((heroPositionY + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.top = ((hero.x + HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.center = ((hero.x + 8) / HITBOX_TILESIZE) + (((hero.y + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
+        targetTile.bottom = ((hero.x + 16 - HITBOX_OFFSET_X) / HITBOX_TILESIZE) + (((hero.y + 16 + 1 - HITBOX_OFFSET_Y) / HITBOX_TILESIZE) * HITBOX_MAPSIZE_X);
 
-        if ((*currentLevelHitboxes)[targetTileIdCenter] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdBottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileIdTop] == 1)
+        if ((*currentLevelHitboxes)[targetTile.center] == 1 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 1 ||
+            (*currentLevelHitboxes)[targetTile.top] == 1)
         {
             // set hero velocity to 0
-            heroMovement &= ~HERO_SPEED_DOWN;
+            hero.movement &= ~HERO_SPEED_DOWN;
+        }
+        else if (numberEnemies &&
+            ((*currentLevelHitboxes)[targetTile.center] == 2 ||
+            (*currentLevelHitboxes)[targetTile.bottom] == 2 ||
+            (*currentLevelHitboxes)[targetTile.top] == 2))
+        {
+            // set hero velocity to 0
+            hero.movement &= ~HERO_SPEED_DOWN;
+        }
+    }
+}
+
+void checkCollisionObject()
+{
+    iterator = 0;
+    for (; iterator < numberEnemies; ++iterator)
+    {
+        if (enemiesStatus[iterator] | ENEMYSTATE_ACTIVE)
+        {
+            // Check hitbox overlap
+
+            if ((hero.x + HITBOX_OFFSET_X) < (enemiesX[iterator] + 16) && (hero.x + 16 - HITBOX_OFFSET_X) > (enemiesX[iterator]) && (hero.y + HITBOX_OFFSET_Y) < (enemiesY[iterator] + 16) && (hero.y + 16 - HITBOX_OFFSET_Y) > (enemiesY[iterator]))
+            {
+                hero.hitTimer = HERO_DEFAULTTIMER;
+                hero.state = HEROSTATE_HIT;
+
+                switch (hero.lastDirection)
+                {
+                case HERO_FACING_RIGHT:
+                    hero.x -= 8;
+                    break;
+                case HERO_FACING_LEFT:
+                    hero.x += 8;
+                    break;
+                case HERO_FACING_DOWN:
+                    hero.y -= 8;
+                    break;
+                case HERO_FACING_UP:
+                    hero.y += 8;
+                    break;
+                };
+            }
         }
     }
 }

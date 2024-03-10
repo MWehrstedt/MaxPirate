@@ -1,9 +1,7 @@
 #ifndef __INPUT_H__
 #define __INPUT_H__
 
-BANKREF_EXTERN(getInputsPlaying)
-void getInputsPlaying() NONBANKED;
+void getInputsPlaying();
 
-BANKREF_EXTERN(getInputsPaused)
-void getInputsPaused() NONBANKED;
+void getInputsPaused();
 #endif

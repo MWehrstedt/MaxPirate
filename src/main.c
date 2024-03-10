@@ -1,11 +1,12 @@
 #include <gb/gb.h>
 #include <stdint.h>
-
+#include <rand.h>
 #include "vars.h"
 #include "graphics.h"
 #include "input.h"
 #include "level-dbg.h"
 #include "hero.h"
+#include "enemies.h"
 
 void loadPalace()
 {
@@ -21,6 +22,7 @@ void loadPalace()
 
 void main(void)
 {
+    initrand(DIV_REG);
     gamestate = GAMESTATE_MAINMENU;
     currentPalaceId = 0;
     loadPalace();
@@ -35,18 +37,24 @@ void main(void)
             // Game main loop processing goes here
 
             getInputsPlaying();
-            (*currentLevelUpdate)();
+            //(*currentLevelUpdate)();
 
-            checkCollision();
-            // handleCollisionEnemies();
+            checkCollisionBackground();
+            checkCollisionObject();
+
             updateHero();
             drawHero();
+
+            updateEnemies();
+            drawEnemies();
+            
             break;
         case GAMESTATE_PAUSED:
             getInputsPaused();
             break;
         case GAMESTATE_DIEING:
-            (*currentPalaceInit)();
+            //(*currentPalaceInit)();
+            initBossDebug();
             break;
         }
         // Done processing, yield CPU and wait for start of next frame

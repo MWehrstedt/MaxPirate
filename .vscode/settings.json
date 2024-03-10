@@ -2,7 +2,10 @@
     "files.associations": {
         "herotiles.h": "c",
         "platform.h": "c",
-        "generaltiles.h": "c"
+        "generaltiles.h": "c",
+        "graphics.h": "c",
+        "generaltiles_map2.h": "c",
+        "vars.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

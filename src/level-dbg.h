@@ -2,13 +2,11 @@
 #define _LEVEL_DBG_H_
 #include <gbdk/platform.h>
 #include <stdint.h>
-#include "../res/hitmaps.h"
+#include "../include/hitmapsPool.h"
 #include "../res/generalTiles_Map.h"
 #include "../res/generalTiles_Map2.h"
 #include "../res/generalTiles_Map3.h"
 
-
-BANKREF_EXTERN(debugHitmap)
 static const uint8_t debugHitmap[3] = {
     0,
     1,
@@ -45,17 +43,13 @@ static const uint8_t warpsListDown[3] = {
     1
 };
 
-BANKREF_EXTERN(initBossDebug)
-void initBossDebug() BANKED;
+void initBossDebug();
 
-BANKREF_EXTERN(updateDebug)
-void updateDebug() BANKED;
+void updateDebug();
 
-BANKREF_EXTERN(loadRoomDebug)
-void loadRoomDebug() BANKED;
+void loadRoomDebug();
 
-BANKREF_EXTERN(loadNextRoomDebug)
-void loadNextRoomDebug() BANKED;
+void loadNextRoomDebug();
 
 // void loadRoom();
 

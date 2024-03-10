@@ -1,65 +1,71 @@
 #include <gb/gb.h>
-#include <gbdk/platform.h>
-#include <string.h>
 #include "vars.h"
 #include "graphics.h"
+#include "enemies.h"
 #include "level-dbg.h"
 #include "../res/generalTiles.h"
 #include "../res/heroTiles.h"
 #include "../res/generalTiles_Map.h"
 
-#pragma bank 255
-
-BANKREF_EXTERN(initBossDebug)
 void initBossDebug()
 {
 
     gamestate = GAMESTATE_PLAYING;
+    hero.state = HEROSTATE_NORMAL;
+    hero.lastDirection = HERO_FACING_UP;
 
-    heroPositionX = 40;
-    heroPositionY = 50;
+    hero.x = 40;
+    hero.y = 50;
+
+    weapon.x = 200;
+    weapon.y = 200;
     currentPalaceRoomId = 2;
 
-    // Init enemies to update
-    // memcpy(&currentLevelHitboxes, &debugHitmap, 90);
-
-    currentLevelUpdate = &updateDebug;
-    currentPalaceLoadRoom = &loadRoomDebug;
-    currentPalaceLoadNextRoom = &loadNextRoomDebug;
+    // currentLevelUpdate = &updateDebug;
+    // currentPalaceLoadRoom = &loadRoomDebug;
+    // currentPalaceLoadNextRoom = &loadNextRoomDebug;
 
     loadRoomDebug();
 }
 
-BANKREF_EXTERN(updateDebug)
 void updateDebug()
 {
+    if (!numberEnemies)
+    {
+        // replace gate tiles with opened ones
+    }
 }
 
-BANKREF_EXTERN(loadRoomDebug)
 void loadRoomDebug()
 {
     currentLevelHitboxes = &hitmapPool[debugHitmap[currentPalaceRoomId]];
     initGfx(generalTiles, mapList[currentPalaceRoomId], heroTiles);
+
+    // Spawn enemies
+    initEnemies();
 }
 
-BANKREF_EXTERN(loadNextRoomDebug)
 void loadNextRoomDebug()
 {
-    if (heroPositionX > 143)
+    if (hero.x > 143)
     {
-        heroPositionX = 4;
+        hero.x = 6;
         currentPalaceRoomId = warpsListRight[currentPalaceRoomId];
-    } else if (heroPositionX <= 1) {
-        heroPositionX = 143;
+    }
+    else if (hero.x <= 1)
+    {
+        hero.x = 141;
         currentPalaceRoomId = warpsListLeft[currentPalaceRoomId];
     }
 
-    if (heroPositionY > 127)
+    if (hero.y > 127)
     {
-        heroPositionY = 4;
+        hero.y = 6;
         currentPalaceRoomId = warpsListDown[currentPalaceRoomId];
-    } else if (heroPositionY <= 1) {
-        heroPositionY = 127;
+    }
+    else if (hero.y <= 1)
+    {
+        hero.y = 125;
         currentPalaceRoomId = warpsListUp[currentPalaceRoomId];
     }
 

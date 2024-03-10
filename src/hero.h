@@ -1,12 +1,11 @@
 #ifndef __HERO_H__
 #define __HERO_H__
 
-BANKREF_EXTERN(drawHero)
-void drawHero() NONBANKED;
+void drawHero();
 
-BANKREF_EXTERN(checkCollision)
-void checkCollision() NONBANKED;
+void checkCollisionBackground();
 
-BANKREF_EXTERN(updateHero)
-void updateHero() NONBANKED;
+void checkCollisionObject();
+
+void updateHero();
 #endif

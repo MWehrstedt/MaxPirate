@@ -25,7 +25,8 @@ for /f %%f in ('dir src\*.c /b') do (
     SET COMP_STRING=!COMP_STRING! obj\%%~nf.o
 )
 
-bin\lcc -o obj\%GAME_RESULT% %COMP_STRING% -Wm-yn%GAME_TITLE% -Wl-yt0x19 -Wl-j -Wm-yoA -autobank -Wb-ext=.rel -Wb-v -debug
+rem bin\lcc -o obj\%GAME_RESULT% %COMP_STRING% -Wm-yn%GAME_TITLE% -Wl-yt0x19 -Wl-j -Wm-yoA -autobank -Wb-ext=.rel -Wb-v -debug
+bin\lcc -o obj\%GAME_RESULT% %COMP_STRING% -Wm-yn%GAME_TITLE% -debug
 
 ECHO %COMP_STRING%
 ECHO === End Compile crows.gb ===
