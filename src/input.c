@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include "graphics.h"
 #include "vars.h"
 
 void getInputsPlaying()
@@ -9,6 +10,7 @@ void getInputsPlaying()
     switch (hero.state)
     {
     case HEROSTATE_NORMAL:
+
         if (joypadCurrent & J_LEFT)
         {
             // clear hero speed right
@@ -22,6 +24,7 @@ void getInputsPlaying()
             hero.movement |= HERO_FACING_LEFT;
 
             hero.lastDirection = HERO_FACING_LEFT;
+            hero.animationTimer = ++hero.animationTimer % HERO_ANIMATIONTIMERMAX;
         }
         else if (joypadCurrent & J_RIGHT)
         {
@@ -36,6 +39,7 @@ void getInputsPlaying()
             hero.movement |= HERO_FACING_RIGHT;
 
             hero.lastDirection = HERO_FACING_RIGHT;
+            hero.animationTimer = ++hero.animationTimer % HERO_ANIMATIONTIMERMAX;
         }
 
         if (joypadCurrent & J_UP)
@@ -51,6 +55,7 @@ void getInputsPlaying()
             hero.movement |= HERO_FACING_UP;
 
             hero.lastDirection = HERO_FACING_UP;
+            hero.animationTimer = ++hero.animationTimer % HERO_ANIMATIONTIMERMAX;
         }
         else if (joypadCurrent & J_DOWN)
         {
@@ -65,12 +70,32 @@ void getInputsPlaying()
             hero.movement |= HERO_FACING_DOWN;
 
             hero.lastDirection = HERO_FACING_DOWN;
+            hero.animationTimer = ++hero.animationTimer % HERO_ANIMATIONTIMERMAX;
         }
 
-        if (joypadCurrent & J_A && !(joypadPrevious & J_A))
+        if (joypadCurrent & J_A && !(joypadPrevious & J_A) && weapon.type == WEAPON_TYPE_INACTIVE)
         {
             hero.state = HEROSTATE_ATTACK;
+            weapon.direction = hero.lastDirection;
+            weapon.type = WEAPON_TYPE_MELEE;
             weapon.timer = WEAPON_DEFAULTTIMER;
+            hero.animationTimer = 0;
+        }
+        else if (joypadCurrent & J_B && !(joypadPrevious & J_B) && weapon.type == WEAPON_TYPE_INACTIVE)
+        {
+            if (hero.energy > 0)
+            {
+                --hero.energy;
+                hero.animationTimer = 0;
+                hero.state = HEROSTATE_ATTACK;
+
+                weapon.x = hero.x + HITBOX_OFFSET_X;
+                weapon.y = hero.y + HITBOX_OFFSET_Y;
+                weapon.direction = hero.lastDirection;
+                weapon.type = WEAPON_TYPE_SHOT;
+                weapon.timer = WEAPON_SHOTTIMER;
+                updateEnergyHUD();
+            }
         }
 
         if (joypadCurrent & J_START && !(joypadPrevious & J_START))
@@ -80,18 +105,6 @@ void getInputsPlaying()
 
         break;
     }
-
-    // if (joypadCurrent & J_B && !(joypadPrevious & J_B))
-    // {
-    //     currentPalaceRoomId = *currentLevelWarpsRight[1];
-    //     (*currentLevelLoadRoom)();
-    // }
-
-    // if (joypadCurrent & J_SELECT && !(joypadPrevious & J_SELECT))
-    // {
-    //     currentPalaceRoomId = *currentLevelWarpsRight[2];
-    //     (*currentLevelLoadRoom)();
-    // }
 
     joypadPrevious = joypadCurrent;
 }

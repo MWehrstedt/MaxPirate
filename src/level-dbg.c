@@ -6,6 +6,7 @@
 #include "../res/generalTiles.h"
 #include "../res/heroTiles.h"
 #include "../res/generalTiles_Map.h"
+#include "../res/overlay.h"
 
 void initBossDebug()
 {
@@ -14,16 +15,17 @@ void initBossDebug()
     hero.state = HEROSTATE_NORMAL;
     hero.lastDirection = HERO_FACING_UP;
 
+    hero.energy = HERO_ENERGYMAX;
     hero.x = 40;
     hero.y = 50;
+    hero.health = HERO_STARTHEALTH;
 
+    weapon.type = WEAPON_TYPE_INACTIVE;
     weapon.x = 200;
     weapon.y = 200;
     currentPalaceRoomId = 2;
 
-    // currentLevelUpdate = &updateDebug;
-    // currentPalaceLoadRoom = &loadRoomDebug;
-    // currentPalaceLoadNextRoom = &loadNextRoomDebug;
+    killedEnemies = 0;
 
     loadRoomDebug();
 }
@@ -39,7 +41,11 @@ void updateDebug()
 void loadRoomDebug()
 {
     currentLevelHitboxes = &hitmapPool[debugHitmap[currentPalaceRoomId]];
-    initGfx(generalTiles, mapList[currentPalaceRoomId], heroTiles);
+    initGfx(generalTiles, mapList[currentPalaceRoomId], heroTiles, overlay);
+
+    updateEnergyHUD();
+    set_win_tile_xy(1, 0, 25 + hero.health);
+    updateEnemyHUD();
 
     // Spawn enemies
     initEnemies();
@@ -54,18 +60,18 @@ void loadNextRoomDebug()
     }
     else if (hero.x <= 1)
     {
-        hero.x = 141;
+        hero.x = 138;
         currentPalaceRoomId = warpsListLeft[currentPalaceRoomId];
     }
 
-    if (hero.y > 127)
+    if (hero.y > 111)
     {
         hero.y = 6;
         currentPalaceRoomId = warpsListDown[currentPalaceRoomId];
     }
     else if (hero.y <= 1)
     {
-        hero.y = 125;
+        hero.y = 96;
         currentPalaceRoomId = warpsListUp[currentPalaceRoomId];
     }
 

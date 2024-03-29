@@ -1,6 +1,6 @@
 /*
 
- HEROTILES.H
+ ENEMYTILES.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 36
+  Tiles                : 0 to 43
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,14 +22,14 @@
 
 */
 
-#ifndef __heroTiles_h_INCLUDE
-#define __heroTiles_h_INCLUDE
+#ifndef __enemyTiles_h_INCLUDE
+#define __enemyTiles_h_INCLUDE
 
 /* Bank of tiles. */
-#define heroTilesBank 0
+#define enemyTilesBank 0
 /* Start of tile array. */
-extern const unsigned char heroTiles[];
+extern const unsigned char enemyTiles[];
 
 #endif
 
-/* End of HEROTILES.H */
+/* End of ENEMYTILES.H */

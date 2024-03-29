@@ -3,9 +3,7 @@
 
 void drawHero();
 
-void checkCollisionBackground();
-
-void checkCollisionObject();
+void updateWeapon();
 
 void updateHero();
 #endif

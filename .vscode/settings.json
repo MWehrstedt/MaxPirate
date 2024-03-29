@@ -5,7 +5,21 @@
         "generaltiles.h": "c",
         "graphics.h": "c",
         "generaltiles_map2.h": "c",
-        "vars.h": "c"
+        "vars.h": "c",
+        "array": "c",
+        "initializer_list": "c",
+        "list": "c",
+        "map": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "xhash": "c",
+        "xstring": "c",
+        "xtree": "c",
+        "xutility": "c",
+        "vcruntime.h": "c",
+        "generaltiles_map.h": "c",
+        "level-dbg.h": "c",
+        "cbtfx.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
