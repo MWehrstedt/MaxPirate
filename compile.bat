@@ -1,16 +1,23 @@
 @echo off
-ECHO === Start Compile crows.gb ===
 
 mkdir -p obj
 
 SET COMP_STRING=
-SET GAME_TITLE=" CROWS   "
-SET GAME_RESULT=crows.gb
+SET GAME_TITLE="POCKETZOMBIES"
+SET GAME_RESULT=pzombies.gb
 
 SETLOCAL EnableDelayedExpansion
 
+ECHO === Start Compile %GAME_RESULT% ===
+
 REM resource files
 ECHO -- Compiling resource files --
+for /f %%f in ('dir res\SFX\*.c /b') do (
+    bin\lcc -c -o obj\%%~nf.o res\SFX\%%~nf.c -debug
+    ECHO res\SFX\%%f
+    SET COMP_STRING=!COMP_STRING! obj\%%~nf.o
+)
+
 for /f %%f in ('dir res\*.c /b') do (
     bin\lcc -c -o obj\%%~nf.o res\%%~nf.c -debug
     ECHO res\%%f
@@ -29,11 +36,11 @@ rem bin\lcc -o obj\%GAME_RESULT% %COMP_STRING% -Wm-yn%GAME_TITLE% -Wl-yt0x19 -Wl
 bin\lcc -o obj\%GAME_RESULT% %COMP_STRING% res/hUGEDriver.lib -Wm-yn%GAME_TITLE% -debug
 
 ECHO %COMP_STRING%
-ECHO === End Compile crows.gb ===
+ECHO === End Compile %GAME_RESULT% ===
 
 IF "%~1"=="-nostart" GOTO SCRIPTEND
 
 ECHO -- Start ROM in BGB --
-..\..\Tools\bgb\bgb.exe obj\crows.gb
+..\..\Tools\bgb\bgb.exe obj\%GAME_RESULT%
 
 :SCRIPTEND

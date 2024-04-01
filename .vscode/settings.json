@@ -19,7 +19,12 @@
         "vcruntime.h": "c",
         "generaltiles_map.h": "c",
         "level-dbg.h": "c",
-        "cbtfx.h": "c"
+        "cbtfx.h": "c",
+        "sfx_opendoor.h": "c",
+        "hugedriver.h": "c",
+        "sfx_growl.h": "c",
+        "stdint.h": "c",
+        "iosfwd": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

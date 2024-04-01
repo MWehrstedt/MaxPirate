@@ -1,113 +1,154 @@
 // #include <gb/gb.h>
 #include <stdint.h>
+#include "cbtfx.h"
+#include "../res/sfx.h"
 #include "vars.h"
 #include "hero.h"
 #include "collision.h"
 
-void checkCollisionObject()
+/// @brief Handle hero collisions with current level hitmaps
+void getCollisions()
 {
-    // iterator = 0;
-    // for (; iterator < ENEMY_MAXNUMBER; ++iterator)
-    // {
-    //     if (enemiesStatus[iterator] & ENEMYSTATE_ACTIVE)
-    //     {
-    //         // Check hitbox overlap
-
-            
-    //     }
-    // }
-}
-
-void checkCollisions()
-{
+    // Get bg collisions
     checkCollisionBackground(hero.movement, hero.x, hero.y, HERO_SPEED);
 
+    // Collision moving left
     if (hero.movement & HERO_SPEED_LEFT)
     {
         if (
-            (*currentLevelHitboxes)[targetTileLeft.center] == 1 ||
-            (*currentLevelHitboxes)[targetTileLeft.bottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileLeft.top] == 1)
+            (*currentLevelHitboxes)[targetTileLeft.center] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileLeft.bottom] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileLeft.top] == HITBOX_TYPE_SOLID)
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_LEFT;
         }
         else if (numberEnemies &&
-                 ((*currentLevelHitboxes)[targetTileLeft.center] == 2 ||
-                  (*currentLevelHitboxes)[targetTileLeft.bottom] == 2 ||
-                  (*currentLevelHitboxes)[targetTileLeft.top] == 2))
+                 ((*currentLevelHitboxes)[targetTileLeft.center] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileLeft.bottom] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileLeft.top] == HITBOX_TYPE_DOOR))
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_LEFT;
         }
+        else if (hero.isInvulnerable == 0 && hero.state != HEROSTATE_HIT &&
+                 ((*currentLevelHitboxes)[targetTileLeft.center] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileLeft.bottom] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileLeft.top] == HITBOX_TYPE_SPIKES))
+        {
+            CBTFX_PLAY_GOTHIT;
+            hero.health--;
+            set_win_tile_xy(1, 1, 41 + hero.health);
+            hero.hitTimer = HERO_DEFAULTTIMER;
+            hero.state = HEROSTATE_HIT;
+        }
     }
 
+    // Collision moving right
     if (hero.movement & HERO_SPEED_RIGHT)
     {
         if (
-            (*currentLevelHitboxes)[targetTileRight.center] == 1 ||
-            (*currentLevelHitboxes)[targetTileRight.bottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileRight.top] == 1)
+            (*currentLevelHitboxes)[targetTileRight.center] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileRight.bottom] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileRight.top] == HITBOX_TYPE_SOLID)
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_RIGHT;
         }
         else if (numberEnemies &&
-                 ((*currentLevelHitboxes)[targetTileRight.center] == 2 ||
-                  (*currentLevelHitboxes)[targetTileRight.bottom] == 2 ||
-                  (*currentLevelHitboxes)[targetTileRight.top] == 2))
+                 ((*currentLevelHitboxes)[targetTileRight.center] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileRight.bottom] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileRight.top] == HITBOX_TYPE_DOOR))
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_RIGHT;
         }
+        else if (hero.isInvulnerable == 0 && hero.state != HEROSTATE_HIT &&
+                 ((*currentLevelHitboxes)[targetTileRight.center] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileRight.bottom] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileRight.top] == HITBOX_TYPE_SPIKES))
+        {
+            CBTFX_PLAY_GOTHIT;
+            hero.health--;
+            set_win_tile_xy(1, 1, 41 + hero.health);
+            hero.hitTimer = HERO_DEFAULTTIMER;
+            hero.state = HEROSTATE_HIT;
+        }
     }
 
+    // Collision moving down
     if (hero.movement & HERO_SPEED_DOWN)
     {
         if (
-            (*currentLevelHitboxes)[targetTileDown.center] == 1 ||
-            (*currentLevelHitboxes)[targetTileDown.bottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileDown.top] == 1)
+            (*currentLevelHitboxes)[targetTileDown.center] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileDown.bottom] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileDown.top] == HITBOX_TYPE_SOLID)
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_DOWN;
         }
         else if (numberEnemies &&
-                 ((*currentLevelHitboxes)[targetTileDown.center] == 2 ||
-                  (*currentLevelHitboxes)[targetTileDown.bottom] == 2 ||
-                  (*currentLevelHitboxes)[targetTileDown.top] == 2))
+                 ((*currentLevelHitboxes)[targetTileDown.center] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileDown.bottom] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileDown.top] == HITBOX_TYPE_DOOR))
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_DOWN;
         }
+        else if (hero.isInvulnerable == 0 && hero.state != HEROSTATE_HIT &&
+                 ((*currentLevelHitboxes)[targetTileDown.center] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileDown.bottom] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileDown.top] == HITBOX_TYPE_SPIKES))
+        {
+            CBTFX_PLAY_GOTHIT;
+            hero.health--;
+            CBTFX_PLAY_GOTHIT;
+            set_win_tile_xy(1, 1, 41 + hero.health);
+            hero.hitTimer = HERO_DEFAULTTIMER;
+            hero.state = HEROSTATE_HIT;
+        }
     }
 
+    // Collision moving up
     if (hero.movement & HERO_SPEED_UP)
     {
         if (
-            (*currentLevelHitboxes)[targetTileUp.center] == 1 ||
-            (*currentLevelHitboxes)[targetTileUp.bottom] == 1 ||
-            (*currentLevelHitboxes)[targetTileUp.top] == 1)
+            (*currentLevelHitboxes)[targetTileUp.center] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileUp.bottom] == HITBOX_TYPE_SOLID ||
+            (*currentLevelHitboxes)[targetTileUp.top] == HITBOX_TYPE_SOLID)
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_UP;
         }
         else if (numberEnemies &&
-                 ((*currentLevelHitboxes)[targetTileUp.center] == 2 ||
-                  (*currentLevelHitboxes)[targetTileUp.bottom] == 2 ||
-                  (*currentLevelHitboxes)[targetTileUp.top] == 2))
+                 ((*currentLevelHitboxes)[targetTileUp.center] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileUp.bottom] == HITBOX_TYPE_DOOR ||
+                  (*currentLevelHitboxes)[targetTileUp.top] == HITBOX_TYPE_DOOR))
         {
             // set hero velocity to 0
             hero.movement &= ~HERO_SPEED_UP;
         }
+        else if (hero.isInvulnerable == 0 && hero.state != HEROSTATE_HIT &&
+                 ((*currentLevelHitboxes)[targetTileUp.center] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileUp.bottom] == HITBOX_TYPE_SPIKES ||
+                  (*currentLevelHitboxes)[targetTileUp.top] == HITBOX_TYPE_SPIKES))
+        {
+            // set hero velocity to 0
+            // hero.movement &= ~HERO_SPEED_UP;
+            CBTFX_PLAY_GOTHIT;
+            hero.health--;
+            set_win_tile_xy(1, 1, 41 + hero.health);
+            hero.hitTimer = HERO_DEFAULTTIMER;
+            hero.state = HEROSTATE_HIT;
+        }
     }
-
-    // if (hero.isInvulnerable == 0 && hero.state != HEROSTATE_HIT)
-    // {
-    //     checkCollisionObject();
-    // }
 }
 
+/// @brief Get tile from current hitmap based on position. Sets `targetTileLeft`, `targetTileRight`, `targetTileUp` and `targetTileDown` based on directions given.
+/// @param direction Direction flags
+/// @param x x position in pixels
+/// @param y y position in pixels
+/// @param speed entity speed
 void checkCollisionBackground(uint8_t direction, uint8_t x, uint8_t y, uint8_t speed)
 {
     // check target tile left

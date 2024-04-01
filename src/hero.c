@@ -1,18 +1,23 @@
 #include <gb/gb.h>
 #include <stdint.h>
-#include "vars.h"
-#include "hero.h"
-#include "enemies.h"
+#include "../res/sfx.h"
+#include "audio.h"
+#include "cbtfx.h"
 #include "collision.h"
-#include "level-dbg.h"
+#include "enemies.h"
+#include "graphics.h"
+#include "hero.h"
+#include "level.h"
+#include "vars.h"
 
+/// @brief Draw and animate hero sprite
 void drawHero()
 {
     switch (hero.state)
     {
+        // Default hero sprites
     case HEROSTATE_HIT:
     case HEROSTATE_NORMAL:
-
         switch (hero.lastDirection)
         {
         case HERO_FACING_LEFT:
@@ -108,8 +113,9 @@ void drawHero()
         set_sprite_prop(3, temp2);
 
         break;
+
+        // // Hero attack sprites
     case HEROSTATE_ATTACK:
-        // TODO: Set attack tile according to direction
         switch (hero.lastDirection)
         {
         case HERO_FACING_LEFT:
@@ -157,6 +163,7 @@ void drawHero()
         set_sprite_prop(3, temp2);
     }
 
+    // Flashing effect if hero is during iframes. Cheaply done by moving them off screen for a couple of frames.
     if (hero.isInvulnerable && DIV_REG % 4 > 1)
     {
         move_sprite(0, hero.x + 8, 200);
@@ -172,20 +179,25 @@ void drawHero()
         move_sprite(3, hero.x + 16, hero.y + 24);
     }
 
+    // Move sprites
     move_sprite(4, weapon.x + 8, weapon.y + 16);
 }
 
+/// @brief Main hero routine
 void updateHero()
 {
+    // Check if hero has died
+    if (hero.health == 0)
+    {
+        DISPLAY_OFF;
+        scoreTimer = GAME_SCORETIMER;
+        gamestate = GAMESTATE_SCORE;
+        hUGE_init(&bgm_gameover);
+        initGfxScore();
+        return;
+    }
 
-    // check if hero has died
-    // if (hero.health == 0)
-    // {
-    //     // TODO: create gameplay routine
-    //     gamestate = GAMESTATE_MAINMENU;
-    //     DISPLAY_OFF;
-    // }
-
+    // Move hero if possible, i.e. the corresponding speed flags are still set.
     if (hero.movement & HERO_SPEED_LEFT)
     {
         hero.x -= HERO_SPEED;
@@ -204,24 +216,23 @@ void updateHero()
         hero.y += HERO_SPEED;
     }
 
+    // Remove invulnerable flag if timer runs out
     if (hero.isInvulnerable && --hero.hitTimer == 0)
     {
         hero.isInvulnerable = 0;
         hero.state = HEROSTATE_NORMAL;
     };
 
-    switch (hero.state)
+    if (hero.state == HEROSTATE_HIT)
     {
-    case HEROSTATE_NORMAL:
-        break;
-    case HEROSTATE_ATTACK:
-        break;
-    case HEROSTATE_HIT:
+        // Remove weapon from screen if hit during attack
         if (weapon.type == WEAPON_TYPE_MELEE)
         {
             weapon.type = WEAPON_TYPE_INACTIVE;
             weapon.timer = 0;
         }
+
+        // Count down hit timer and remove flag if run out.
         if (--hero.hitTimer == 0)
         {
             SHOW_SPRITES;
@@ -229,6 +240,8 @@ void updateHero()
             hero.state = HEROSTATE_NORMAL;
             hero.isInvulnerable = 1;
         }
+
+        // Knockback during the first few frames
         else if (hero.hitTimer > HERO_DEFAULTTIMER - 12)
         {
             switch (hero.lastDirection)
@@ -247,10 +260,9 @@ void updateHero()
                 break;
             };
         }
-        break;
     }
 
-    // Check for warp collisions
+    // Dirty bug fix for northern warp
     if (hero.state != HEROSTATE_NORMAL && hero.y <= 2)
     {
         hero.y = 3;
@@ -259,19 +271,21 @@ void updateHero()
     // Check for warp collisions
     if (!numberEnemies && (hero.x <= 1 || hero.x > 143 || hero.y <= 2 || hero.y > 111))
     {
-        loadNextRoomDebug();
+        loadNextLevel();
     }
 }
 
+/// @brief Main weapon routine
 void updateWeapon()
 {
-
+    // Disable weapon if timer runs out
     if (--weapon.timer == 0)
     {
         weapon.type = WEAPON_TYPE_INACTIVE;
         if (hero.state == HEROSTATE_ATTACK)
             hero.state = HEROSTATE_NORMAL;
     }
+
     switch (weapon.type)
     {
     case WEAPON_TYPE_INACTIVE:
@@ -336,6 +350,7 @@ void updateWeapon()
         break;
     }
 
+    // For the projectile weapon, set player state to normal after a few frames, so the hero doesn't need to wait for the whole shot to finish
     if (weapon.timer == (WEAPON_SHOTTIMER - WEAPON_DEFAULTTIMER) && hero.state == HEROSTATE_ATTACK)
     {
         hero.state = HEROSTATE_NORMAL;
