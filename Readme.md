@@ -8,12 +8,12 @@ The self-imposed goal was to restrict myself to the base cartridge, no MBC.
 ![image](https://onedrive.live.com/embed?resid=72F9E0AC3DFC344D%21558436&authkey=%21AMetzUjHGYDHXXI&width=638&height=574)
 
 ## Compile
-Adjust paths to GDBK and your favourite emulator if necessary and run the make file or `compile.bat`. You can use `compile.bat -nostart` To just compile the game.
+Adjust paths to GDBK and your favourite emulator if necessary and run the make file or `compile.bat`. You can use `compile.bat -nostart` to just compile the game.
 ## Credits
 
 ### Assets
 
-Graphics by and based on [the GB Orables assets by GibbonGL](https://gibbongl.itch.io/)
+Graphics by and based on [the GB Oracles assets by GibbonGL](https://gibbongl.itch.io/)
 
 SFX and BGM by [beatscribe](https://twitter.com/beatscribe)
 
