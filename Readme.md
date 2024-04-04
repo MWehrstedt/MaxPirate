@@ -9,20 +9,11 @@ You are a pirate captain who has just arrived to a small port town. But the loca
 
 ## Compile
 Adjust paths to GDBK and your favourite emulator if necessary and run the make file or `compile.bat`. You can use `compile.bat -nostart` To just compile the game.
-
-## Controls
-
-D-Pad: Move character
-
-A button: Anchor attack
-
-B button: Cannon attack, needs ammo
-
 ## Credits
 
 ### Assets
 
-Graphics by and based on [the GB Orables assets by GibbonGL](https://gibbongl.itch.io/)
+Graphics by and based on [the GB Oracles assets by GibbonGL](https://gibbongl.itch.io/)
 
 SFX and BGM by [beatscribe](https://twitter.com/beatscribe)
 
