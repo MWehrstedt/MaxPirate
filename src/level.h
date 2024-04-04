@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "../include/hitmapsPool.h"
 #include "../res/generalTilesIntro_map.h"
+#include "../res/generalTilesOutro_map.h"
 #include "../res/generalTiles_Map.h"
 #include "../res/generalTiles_Map2.h"
 #include "../res/generalTiles_Map3.h"
@@ -18,6 +19,7 @@ static const uint8_t hitMaps[GAME_MAPNUMBER] = {
     3,
     4,
     5,
+    6
 };
 
 /// @brief Pool of tile maps for levels
@@ -28,6 +30,7 @@ static const uint8_t *mapBGPool[GAME_MAPNUMBER] = {
     generalTiles_Map4,
     generalTiles_Map5,
     generalTilesIntro_Map,
+    generalTilesOutro_Map
 };
 
 /// @brief Top x position for the gate in each level
@@ -37,6 +40,7 @@ static const uint8_t doorLocationsTopX[GAME_MAPNUMBER] = {
     28,
     8,
     2,
+    28,
     28
 };
 
@@ -48,7 +52,8 @@ static const uint8_t doorLocationsLeftY[GAME_MAPNUMBER] = {
     6,
     28,
     28,
-};
+    28,
+    };
 
 /// @brief Bottom x position for the gate in each level
 static const uint8_t doorLocationsBottomX[GAME_MAPNUMBER] = {
@@ -66,6 +71,7 @@ static const uint8_t doorLocationsRightY[GAME_MAPNUMBER] = {
     6,
     8,
     6,
+    28,
     28,
     28,
 };

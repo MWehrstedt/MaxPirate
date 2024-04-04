@@ -21,7 +21,9 @@ void spawnEnemy()
         {
             if (!(enemiesStatus[iterator2] & ENEMYSTATE_ACTIVE))
             {
-                enemiesType[iterator2] = ENEMYTYPE_ZOMBIE;
+                // enemiesType[iterator2] = ENEMYTYPE_ZOMBIE;
+                enemiesType[iterator2] = (DIV_REG % 2) + 1;
+
                 enemiesStatus[iterator2] = ENEMYSTATE_SPAWNING | ENEMYSTATE_ACTIVE | ENEMYSTATE_DIRECTIONISRIGHT;
                 enemiesHealth[iterator2] = 2;
 
@@ -306,7 +308,7 @@ void updateEnemies()
                 ((hero.x + HITBOX_OFFSET_X) < (enemiesX[iterator] + 10) && (hero.x + 16 - HITBOX_OFFSET_X) > (enemiesX[iterator] + 2) && (hero.y + HITBOX_OFFSET_Y) < (enemiesY[iterator] + 10) && (hero.y + 16 - HITBOX_OFFSET_Y) > (enemiesY[iterator] - 2)))
             {
                 CBTFX_PLAY_GOTHIT;
-                set_win_tile_xy(1, 1, 41 + hero.health--);
+                set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health--);
                 hero.hitTimer = HERO_DEFAULTTIMER;
                 hero.state = HEROSTATE_HIT;
             }

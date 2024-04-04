@@ -38,9 +38,25 @@ void getCollisions()
         {
             CBTFX_PLAY_GOTHIT;
             hero.health--;
-            set_win_tile_xy(1, 1, 41 + hero.health);
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
             hero.hitTimer = HERO_DEFAULTTIMER;
             hero.state = HEROSTATE_HIT;
+            return;
+        }
+        else if (heartCollected == 0 &&
+                 ((*currentLevelHitboxes)[targetTileLeft.center] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileLeft.bottom] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileLeft.top] == HITBOX_TYPE_HEART))
+        {
+            heartCollected = 1;
+            ++hero.health;
+
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
+
+            set_bkg_tile_xy(9, 6, 0);
+            set_bkg_tile_xy(10, 6, 0);
+            set_bkg_tile_xy(9, 7, 0);
+            set_bkg_tile_xy(10, 7, 0);
         }
     }
 
@@ -70,9 +86,25 @@ void getCollisions()
         {
             CBTFX_PLAY_GOTHIT;
             hero.health--;
-            set_win_tile_xy(1, 1, 41 + hero.health);
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
             hero.hitTimer = HERO_DEFAULTTIMER;
             hero.state = HEROSTATE_HIT;
+            return;
+        }
+        else if (heartCollected == 0 &&
+                 ((*currentLevelHitboxes)[targetTileRight.center] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileRight.bottom] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileRight.top] == HITBOX_TYPE_HEART))
+        {
+            heartCollected = 1;
+            ++hero.health;
+
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
+
+            set_bkg_tile_xy(9, 6, 0);
+            set_bkg_tile_xy(10, 6, 0);
+            set_bkg_tile_xy(9, 7, 0);
+            set_bkg_tile_xy(10, 7, 0);
         }
     }
 
@@ -103,9 +135,25 @@ void getCollisions()
             CBTFX_PLAY_GOTHIT;
             hero.health--;
             CBTFX_PLAY_GOTHIT;
-            set_win_tile_xy(1, 1, 41 + hero.health);
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
             hero.hitTimer = HERO_DEFAULTTIMER;
             hero.state = HEROSTATE_HIT;
+            return;
+        }
+        else if (heartCollected == 0 &&
+                 ((*currentLevelHitboxes)[targetTileDown.center] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileDown.bottom] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileDown.top] == HITBOX_TYPE_HEART))
+        {
+            heartCollected = 1;
+            ++hero.health;
+
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
+
+            set_bkg_tile_xy(9, 6, 0);
+            set_bkg_tile_xy(10, 6, 0);
+            set_bkg_tile_xy(9, 7, 0);
+            set_bkg_tile_xy(10, 7, 0);
         }
     }
 
@@ -137,9 +185,25 @@ void getCollisions()
             // hero.movement &= ~HERO_SPEED_UP;
             CBTFX_PLAY_GOTHIT;
             hero.health--;
-            set_win_tile_xy(1, 1, 41 + hero.health);
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
             hero.hitTimer = HERO_DEFAULTTIMER;
             hero.state = HEROSTATE_HIT;
+            return;
+        }
+        else if (heartCollected == 0 &&
+                 ((*currentLevelHitboxes)[targetTileUp.center] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileUp.bottom] == HITBOX_TYPE_HEART ||
+                  (*currentLevelHitboxes)[targetTileUp.top] == HITBOX_TYPE_HEART))
+        {
+            heartCollected = 1;
+            ++hero.health;
+
+            set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
+
+            set_bkg_tile_xy(9, 6, 0);
+            set_bkg_tile_xy(10, 6, 0);
+            set_bkg_tile_xy(9, 7, 0);
+            set_bkg_tile_xy(10, 7, 0);
         }
     }
 }

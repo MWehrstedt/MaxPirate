@@ -7,6 +7,9 @@ void drawHero();
 /// @brief Main hero routine
 void updateHero();
 
+/// @brief Handle knockback during hitstate
+void handleHitstate();
+
 /// @brief Main weapon routine
 void updateWeapon();
 #endif

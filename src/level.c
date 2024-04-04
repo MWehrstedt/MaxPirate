@@ -23,9 +23,10 @@ void initLevel()
     weapon.type = WEAPON_TYPE_INACTIVE;
     weapon.x = 200;
     weapon.y = 200;
-    currentLevelId = GAME_MAPNUMBER - 1;
+    currentLevelId = GAME_MAPNUMBER - 2;
 
     killedEnemies = 0;
+    roomsCleared = 255;
 
     loadLevel(0);
 }
@@ -39,12 +40,13 @@ void loadLevel(uint8_t numberEnemies)
 
     // Load graphics
     initGfx(generalTiles, mapBGPool[currentLevelId], heroTiles, overlayMap);
-    set_win_tile_xy(1, 1, 41 + hero.health);
+    set_win_tile_xy(GAME_NUMBERSPRITEHEALTHX, 1, GAME_NUMBERSPRITEOFFSETPLAYING + hero.health);
     updateEnergyHUDGfx();
     updateEnemyHUDGfx();
 
     // Spawn enemies
     initEnemies(numberEnemies);
+    SHOW_SPRITES;
 }
 
 /// @brief Selects a random level from the pool and loads it
@@ -59,11 +61,23 @@ void loadNextLevel()
     if (hero.y > 111)
         hero.y = 16;
     else if (hero.y <= 2)
-        hero.y = 104;
+        hero.y = 96;
 
-    // Select new random level from pool
-    currentLevelId = (uint8_t)rand() % (GAME_MAPNUMBER - 1);
+    ++roomsCleared;
 
     // Load new level
-    loadLevel(ENEMY_DEFAULTENEMYNUMBER + ((uint8_t)rand() % 10));
+    if (roomsCleared > 0 && (roomsCleared % GAME_HEALTHROOMNUMBER) == 0)
+    {
+        heartCollected = 0;
+        hero.x = 72;
+        hero.y = 96;
+        currentLevelId = GAME_MAPNUMBER - 1;
+        loadLevel(0);
+    }
+    else
+    {
+        // Select new random level from pool
+        currentLevelId = (uint8_t)rand() % (GAME_MAPNUMBER - 2);
+        loadLevel(ENEMY_DEFAULTENEMYNUMBER + ((uint8_t)rand() % 4));
+    }
 }

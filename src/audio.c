@@ -66,7 +66,7 @@ void disableAudio()
 /// @brief Advance audio tick for playback
 void updateAudio()
 {
-    if (gamestate != GAMESTATE_PAUSED)
+    if (gamestate != GAMESTATE_PAUSED && hero.state != HEROSTATE_DIEING)
     {
         hUGE_dosound();
     }

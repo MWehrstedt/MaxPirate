@@ -99,6 +99,7 @@ void handleInputsPlaying()
         // Melee attack
         if (joypadCurrent & J_A && !(joypadPrevious & J_A) && weapon.type == WEAPON_TYPE_INACTIVE)
         {
+            CBTFX_PLAY_SWING;
             hero.state = HEROSTATE_ATTACK;
             weapon.direction = hero.lastDirection;
             weapon.type = WEAPON_TYPE_MELEE;
@@ -111,7 +112,7 @@ void handleInputsPlaying()
         {
             if (hero.energy > 0)
             {
-                CBTFX_PLAY_ENERGYBEAM;
+                CBTFX_PLAY_BOOM;
                 --hero.energy;
                 hero.animationTimer = 0;
                 hero.state = HEROSTATE_ATTACK;
@@ -131,11 +132,11 @@ void handleInputsPlaying()
             gamestate = GAMESTATE_PAUSING;
         }
 
-        // Debug: kill yourself
-        if (joypadCurrent & J_SELECT && !(joypadPrevious & J_SELECT))
-        {
-            hero.health = 0;
-        }
+        // // Debug: kill yourself
+        // if (joypadCurrent & J_SELECT && !(joypadPrevious & J_SELECT))
+        // {
+        //     hero.health = 0;
+        // }
 
         break;
     }

@@ -4,6 +4,7 @@
 
 // ----- Defines -----
 
+#define CBTFX_PLAY_CONFIRM CBTFX_init(&sfx_confirm[0])
 #define CBTFX_PLAY_CLOSEDOOR CBTFX_init(&sfx_closedoor[0])
 #define CBTFX_PLAY_DIE CBTFX_init(&sfx_die[0])
 #define CBTFX_PLAY_ENEMYDESTROY CBTFX_init(&sfx_enemydestroy[0])
@@ -13,6 +14,8 @@
 #define CBTFX_PLAY_HEALTH CBTFX_init(&sfx_health[0])
 #define CBTFX_PLAY_OPENDOOR CBTFX_init(&sfx_opendoor[0])
 #define CBTFX_PLAY_POWERUP CBTFX_init(&sfx_powerup[0])
+#define CBTFX_PLAY_BOOM CBTFX_init(&sfx_boom[0])
+#define CBTFX_PLAY_SWING CBTFX_init(&sfx_swing[0])
 
 #define ENEMY_DEFAULTHEALTH 127
 #define ENEMY_DEFAULTENEMYNUMBER 8
@@ -49,12 +52,17 @@
 #define HITBOX_TYPE_SOLID 1
 #define HITBOX_TYPE_DOOR 2
 #define HITBOX_TYPE_SPIKES 3
+#define HITBOX_TYPE_HEART 4
 
+#define GAME_HEALTHROOMNUMBER 6
 #define GAME_INTROTIMER 240
-#define GAME_MAPNUMBER 6
+#define GAME_MAPNUMBER 7
+#define GAME_NUMBERSPRITEOFFSETPLAYING 45
+#define GAME_NUMBERSPRITEOFFSETSCORE 28
+#define GAME_NUMBERSPRITEHEALTHX 2
 #define GAME_SCORETIMER 400
-#define GAME_WINPLAYINGY 128
 #define GAME_WINPAUSEDY 96
+#define GAME_WINPLAYINGY 128
 
 #define GAMESTATE_INTRO 0
 #define GAMESTATE_MAINMENU 1
@@ -63,6 +71,7 @@
 #define GAMESTATE_PAUSING 4
 #define GAMESTATE_UNPAUSING 5
 #define GAMESTATE_SCORE 6
+#define GAMESTATE_DIEING 7
 
 #define HERO_FACING_LEFT 0b10000000
 #define HERO_FACING_RIGHT 0b01000000
@@ -72,6 +81,7 @@
 #define HERO_ANIMATIONTIMER 10
 #define HERO_ANIMATIONTIMERMAX 20
 #define HERO_DEFAULTTIMER 15
+#define HERO_DIEINGTIMER 300
 #define HERO_ENERGYMAX 5
 #define HERO_INVULNTIMER 100
 #define HERO_SPEED 1
@@ -80,7 +90,7 @@
 #define HERO_SPEED_UP 0b00000010
 #define HERO_SPEED_DOWN 0b00000001
 #define HERO_SPEED_RESETMASK 0b00001111
-#define HERO_STARTHEALTH 6
+#define HERO_STARTHEALTH 8
 
 #define HEROSTATE_NORMAL 0b00000001
 #define HEROSTATE_HIT 0b00000010
@@ -88,13 +98,12 @@
 #define HEROSTATE_DEMON 0b00000100
 #define HEROSTATE_DEMON_HIT 0b00000101
 #define HEROSTATE_ATTACK 0b00000110
-#define HEROSTATE_SPECIAL 0b00000111
-#define HEROSTATE_CUTSCENE 0b00001000
+#define HEROSTATE_DIEING 0b00000111
 
 #define WEAPON_DEFAULTTIMER 15
 #define WEAPON_HITBOX_OFFSET_X 2
 #define WEAPON_HITBOX_OFFSET_Y 2
-#define WEAPON_SHOTTIMER 30
+#define WEAPON_SHOTTIMER 40
 #define WEAPON_SHOTSPEED 2
 #define WEAPON_MELEE_SPRITE_ID 33
 #define WEAPON_SHOT_SPRITE_ID 35
@@ -139,6 +148,11 @@ extern uint8_t currentLevelId;
 
 /// @brief Global score counter
 extern uint16_t killedEnemies;
+
+/// @brief Counter for rooms cleared
+extern uint8_t roomsCleared;
+
+extern uint8_t heartCollected;
 
 /// @brief BGM Game loop
 extern const hUGESong_t bgm_rpgbattle;

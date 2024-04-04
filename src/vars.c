@@ -38,6 +38,11 @@ uint8_t currentLevelId = 255;
 /// @brief Global score counter
 uint16_t killedEnemies;
 
+/// @brief Counter for rooms cleared
+uint8_t roomsCleared;
+
+uint8_t heartCollected;
+
 /// @brief Hero object
 hero_t hero;
 

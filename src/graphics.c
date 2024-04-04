@@ -4,6 +4,7 @@
 #include "../res/enemyTiles.h"
 #include "../res/generalTiles.h"
 #include "../res/generalTilesIntro_map.h"
+#include "../res/generalTilesOutro_map.h"
 #include "../res/generalTiles_Map.h"
 #include "../res/generalTiles_Map2.h"
 #include "../res/generalTiles_Map3.h"
@@ -92,14 +93,12 @@ void initGfx(unsigned char *bgTiles, const unsigned char *bgMap, unsigned char *
 
     SHOW_BKG;
     SHOW_WIN;
-    SHOW_SPRITES;
 }
 
 /// @brief Load score graphics
 void initGfxScore()
 {
     DISPLAY_OFF;
-
     HIDE_WIN;
     HIDE_SPRITES;
     // Load compressed tiles to VRAM
@@ -108,10 +107,14 @@ void initGfxScore()
     // Set bg map to intro map
     set_bkg_tiles(0, 0, 20, 18u, scoreTiles_Map);
 
-    set_bkg_tile_xy(8, 5, 28 + (killedEnemies / 1000));
-    set_bkg_tile_xy(9, 5, 28 + ((killedEnemies % 1000) / 100));
-    set_bkg_tile_xy(10, 5, 28 + ((killedEnemies % 100) / 10));
-    set_bkg_tile_xy(11, 5, 28 + (killedEnemies % 10));
+    set_bkg_tile_xy(8, 6, 28 + (killedEnemies / 1000));
+    set_bkg_tile_xy(9, 6, 28 + ((killedEnemies % 1000) / 100));
+    set_bkg_tile_xy(10, 6, 28 + ((killedEnemies % 100) / 10));
+    set_bkg_tile_xy(11, 6, 28 + (killedEnemies % 10));
+
+    set_bkg_tile_xy(9, 9, 28 + ((roomsCleared % 1000) / 100));
+    set_bkg_tile_xy(10, 9, 28 + ((roomsCleared % 100) / 10));
+    set_bkg_tile_xy(11, 9, 28 + (roomsCleared % 10));
 
     SHOW_BKG;
     DISPLAY_ON;
@@ -126,12 +129,12 @@ void updateEnergyHUDGfx()
         if (hero.energy > iterator2)
         {
             // Draw filled
-            set_win_tile_xy(7 + iterator2, 1, 37);
+            set_win_tile_xy(7 + iterator2, 1, 41);
         }
         else
         {
             // Draw empty
-            set_win_tile_xy(7 + iterator2, 1, 38);
+            set_win_tile_xy(7 + iterator2, 1, 42);
         }
     }
 }
@@ -141,11 +144,15 @@ void updateEnemyHUDGfx()
 {
     if (killedEnemies > 999)
     {
-        set_win_tile_xy(16, 1, 41 + (killedEnemies / 1000));
+        set_win_tile_xy(15, 1, GAME_NUMBERSPRITEOFFSETPLAYING + (killedEnemies / 1000));
     }
-    set_win_tile_xy(17, 1, 41 + ((killedEnemies % 1000) / 100));
-    set_win_tile_xy(18, 1, 41 + ((killedEnemies % 100) / 10));
-    set_win_tile_xy(19, 1, 41 + (killedEnemies % 10));
+    set_win_tile_xy(16, 1, GAME_NUMBERSPRITEOFFSETPLAYING + ((killedEnemies % 1000) / 100));
+    set_win_tile_xy(17, 1, GAME_NUMBERSPRITEOFFSETPLAYING + ((killedEnemies % 100) / 10));
+    set_win_tile_xy(18, 1, GAME_NUMBERSPRITEOFFSETPLAYING + (killedEnemies % 10));
+
+    set_win_tile_xy(16, 2, GAME_NUMBERSPRITEOFFSETPLAYING + ((roomsCleared % 1000) / 100));
+    set_win_tile_xy(17, 2, GAME_NUMBERSPRITEOFFSETPLAYING + ((roomsCleared % 100) / 10));
+    set_win_tile_xy(18, 2, GAME_NUMBERSPRITEOFFSETPLAYING + (roomsCleared % 10));
 }
 
 /// @brief Replace closed gate graphics with empty tiles

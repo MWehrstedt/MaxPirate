@@ -187,13 +187,26 @@ void drawHero()
 void updateHero()
 {
     // Check if hero has died
-    if (hero.health == 0)
+    if (hero.health == 0 && hero.state != HEROSTATE_DIEING)
     {
-        DISPLAY_OFF;
-        scoreTimer = GAME_SCORETIMER;
-        gamestate = GAMESTATE_SCORE;
-        hUGE_init(&bgm_gameover);
-        initGfxScore();
+        // Mute BGM and enable sound channels afterwards again.
+        // Quick fix to flush sound registers
+        muteAudio();
+
+        NR52_REG = 0x80;
+        NR51_REG = 0xFF;
+        NR50_REG = 0x54;
+
+        for (iterator = 0; iterator < ENEMY_MAXNUMBER; ++iterator)
+        {
+            // Move enemy off-screen
+            enemiesX[iterator] = 200;
+            enemiesY[iterator] = 200;
+        }
+
+        CBTFX_PLAY_DIE;
+        gamestate = GAMESTATE_DIEING;
+        scoreTimer = HERO_DIEINGTIMER;
         return;
     }
 
@@ -223,6 +236,22 @@ void updateHero()
         hero.state = HEROSTATE_NORMAL;
     };
 
+    // Dirty bug fix for northern warp
+    if (hero.state != HEROSTATE_NORMAL && hero.y <= 2)
+    {
+        hero.y = 3;
+    }
+
+    // Check for warp collisions
+    if (!numberEnemies && (hero.x <= 1 || hero.x > 143 || hero.y <= 2 || hero.y > 111))
+    {
+        loadNextLevel();
+    }
+}
+
+/// @brief Handle knockback during hitstate
+void handleHitstate()
+{
     if (hero.state == HEROSTATE_HIT)
     {
         // Remove weapon from screen if hit during attack
@@ -247,31 +276,24 @@ void updateHero()
             switch (hero.lastDirection)
             {
             case HERO_FACING_RIGHT:
-                hero.x -= 1;
+                // set hero speed
+                hero.movement |= HERO_SPEED_LEFT;
+                hero.movement &= ~HERO_SPEED_RIGHT;
                 break;
             case HERO_FACING_LEFT:
-                hero.x += 1;
+                hero.movement |= HERO_SPEED_RIGHT;
+                hero.movement &= ~HERO_SPEED_LEFT;
                 break;
             case HERO_FACING_DOWN:
-                hero.y -= 1;
+                hero.movement |= HERO_SPEED_UP;
+                hero.movement &= ~HERO_SPEED_DOWN;
                 break;
             case HERO_FACING_UP:
-                hero.y += 1;
+                hero.movement |= HERO_SPEED_DOWN;
+                hero.movement &= ~HERO_SPEED_UP;
                 break;
             };
         }
-    }
-
-    // Dirty bug fix for northern warp
-    if (hero.state != HEROSTATE_NORMAL && hero.y <= 2)
-    {
-        hero.y = 3;
-    }
-
-    // Check for warp collisions
-    if (!numberEnemies && (hero.x <= 1 || hero.x > 143 || hero.y <= 2 || hero.y > 111))
-    {
-        loadNextLevel();
     }
 }
 
@@ -327,22 +349,22 @@ void updateWeapon()
         switch (weapon.direction)
         {
         case HERO_FACING_LEFT:
-            weapon.x--;
+            weapon.x -= WEAPON_SHOTSPEED;
             set_sprite_tile(4, WEAPON_SHOT_SPRITE_ID);
             set_sprite_prop(4, S_FLIPX);
             break;
         case HERO_FACING_RIGHT:
-            weapon.x++;
+            weapon.x += WEAPON_SHOTSPEED;
             set_sprite_tile(4, WEAPON_SHOT_SPRITE_ID);
             set_sprite_prop(4, get_sprite_prop(4) & ~S_FLIPX);
             break;
         case HERO_FACING_UP:
-            weapon.y--;
+            weapon.y -= WEAPON_SHOTSPEED;
             set_sprite_tile(4, WEAPON_SHOT_SPRITE_ID + 1);
             set_sprite_prop(4, get_sprite_prop(4) & ~S_FLIPY);
             break;
         case HERO_FACING_DOWN:
-            weapon.y++;
+            weapon.y += WEAPON_SHOTSPEED;
             set_sprite_tile(4, WEAPON_SHOT_SPRITE_ID + 1);
             set_sprite_prop(4, S_FLIPY);
             break;
