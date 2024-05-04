@@ -8,7 +8,7 @@
    Section       : 
    Bank          : 0
    Map size      : 20 x 18
-   Tile set      : menuTiles.gbr
+   Tile set      : pocket zombies.gbm.tiles.gbr
    Plane count   : 1 plane (8 bits)
    Plane order   : Planes are continues
    Tile offset   : 0

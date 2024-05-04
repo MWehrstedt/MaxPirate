@@ -3,8 +3,8 @@
 mkdir -p obj
 
 SET COMP_STRING=
-SET GAME_TITLE="POCKETZOMBIES"
-SET GAME_RESULT=pzombies.gb
+SET GAME_TITLE="MAXPIRATE    "
+SET GAME_RESULT=maxpirate.gb
 
 SETLOCAL EnableDelayedExpansion
 

@@ -19,17 +19,17 @@ void updateMenu()
         temp = 0;
     if (temp % 60 > 29)
     {
-        set_bkg_tile_xy(4, 13, 88);
-        set_bkg_tile_xy(5, 13, 89);
-        set_bkg_tile_xy(6, 13, 90);
-        set_bkg_tile_xy(7, 13, 91);
-        set_bkg_tile_xy(8, 13, 91);
+        set_bkg_tile_xy(4, 13, 85);
+        set_bkg_tile_xy(5, 13, 86);
+        set_bkg_tile_xy(6, 13, 87);
+        set_bkg_tile_xy(7, 13, 88);
+        set_bkg_tile_xy(8, 13, 88);
 
-        set_bkg_tile_xy(12, 13, 91);
-        set_bkg_tile_xy(13, 13, 92);
-        set_bkg_tile_xy(14, 13, 93);
-        set_bkg_tile_xy(15, 13, 89);
-        set_bkg_tile_xy(16, 13, 92);
+        set_bkg_tile_xy(12, 13, 88);
+        set_bkg_tile_xy(13, 13, 89);
+        set_bkg_tile_xy(14, 13, 90);
+        set_bkg_tile_xy(15, 13, 86);
+        set_bkg_tile_xy(16, 13, 89);
     }
     else
     {
