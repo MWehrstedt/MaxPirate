@@ -34,7 +34,7 @@ SFX driver: [CBT-FX](https://github.com/coffeevalenbat/CBT-FX/tree/main)
 Made with [GBDK 2020 version 4.0.5](https://github.com/gbdk-2020/gbdk-2020)
 
 # Current state
-I consider it basically done. Now hardware testing and balancing.
+I consider it done.
 
 # Tested on
 
@@ -44,7 +44,7 @@ I consider it basically done. Now hardware testing and balancing.
 - ✔️ DMG-01 (OG Game Boy)
 - ⭕ Super Game Boy (PAL SNES)
 - ✔️ MGB-001 (Pocket)
-- ⭕ MGB-101 (Light)
-- ⭕ CGB-001 (Color)
-- ⭕ AGB-001 (Advance)
-- ⭕ AGS-001 (Advance SP)
+- ✔️ MGB-101 (Light)
+- ✔️ CGB-001 (Color)
+- ✔️ AGB-001 (Advance)
+- ✔️ AGS-001 (Advance SP)
