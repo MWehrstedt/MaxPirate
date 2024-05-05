@@ -3,7 +3,6 @@ A simple top down action game for the original Game Boy (DMG). Made with GBDK Ve
 
 You are a pirate captain who has just arrived to a small port town. But the locals you are not as lively as you expected them. Armed with your trusty anchor and cannon Bessie, you try to eliminate as many of them as you can!
 
-![image](https://onedrive.live.com/embed?resid=72F9E0AC3DFC344D%21558571&authkey=%21AD5ypugc2swmQa4&width=320&height=288)
 ![image](https://onedrive.live.com/embed?resid=72F9E0AC3DFC344D%21558572&authkey=%21ADiuifm16hKWbS0&width=320&height=288)
 ![image](https://onedrive.live.com/embed?resid=72F9E0AC3DFC344D%21558573&authkey=%21AKkSacSQ_k1xCwE&width=320&height=288)
 
